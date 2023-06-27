@@ -24,34 +24,7 @@ import {
   PerformanceMonitor,
 } from "@react-three/drei";
 
-// import PostFX from "component_landingpage/PostFX";
-import { CylinderGeometry } from "three";
 
-// function Effect2(progress) {
-//   const { gl, scene, camera, size } = useThree();
-//   // const renderer = new PostFX(gl);
-//   let progress_old = null;
-//   const post_old = null;
-//   return useFrame(({ clock }) => {
-//     // deltaSomme += delta;
-//     // renderer.render(scene, camera);
-//     const post = new PostFX(gl, 0.1);
-//     post.render(scene, camera);
-//     // if (post_old==null){
-//     //   post_old=post
-//     // }else{
-//     //   post_old.delete()
-//     // }
-//     // if (progress_old != progress) {
-//     // progress_old=progress
-//     // renderer.setProgress(progress);
-//     // } else {
-
-//     // }
-//   }, 1);
-// }
-
-// extend(MyShaderPass);
 
 function Cyl({ rotation, length, position }) {
   return (
