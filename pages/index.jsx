@@ -1,11 +1,7 @@
 import dynamic from "next/dynamic";
 import * as THREE from "three";
 
-import {
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import { useEffect, useRef, useMemo } from "react";
 
 import {
   Canvas,
@@ -13,51 +9,58 @@ import {
   useFrame,
   extend,
   useThree,
-  Tube,
 } from "@react-three/fiber";
-import {  GLSL } from "gl-react";
+import { GLSL } from "gl-react";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { useControls } from "leva";
-import MyShaderPass from "component_landingpage/shaderpass";
+// import MyShaderPass from "component_landingpage/shaderpass";
 
 import {
   OrbitControls,
   Text,
-  Trail,
   shaderMaterial,
   PerspectiveCamera,
   AdaptiveDpr,
   PerformanceMonitor,
 } from "@react-three/drei";
 
-import { VFXSpan } from "react-vfx";
-import PostFX from "component_landingpage/PostFX";
+// import PostFX from "component_landingpage/PostFX";
+import { CylinderGeometry } from "three";
 
-function Effect2(progress) {
-  const { gl, scene, camera, size } = useThree();
-  // const renderer = new PostFX(gl);
-  let progress_old = null;
-  const post_old = null;
-  return useFrame(({ clock }) => {
-    // deltaSomme += delta;
-    // renderer.render(scene, camera);
-    const post = new PostFX(gl, 0.1);
-    post.render(scene, camera);
-    // if (post_old==null){
-    //   post_old=post
-    // }else{
-    //   post_old.delete()
-    // }
-    // if (progress_old != progress) {
-    // progress_old=progress
-    // renderer.setProgress(progress);
-    // } else {
+// function Effect2(progress) {
+//   const { gl, scene, camera, size } = useThree();
+//   // const renderer = new PostFX(gl);
+//   let progress_old = null;
+//   const post_old = null;
+//   return useFrame(({ clock }) => {
+//     // deltaSomme += delta;
+//     // renderer.render(scene, camera);
+//     const post = new PostFX(gl, 0.1);
+//     post.render(scene, camera);
+//     // if (post_old==null){
+//     //   post_old=post
+//     // }else{
+//     //   post_old.delete()
+//     // }
+//     // if (progress_old != progress) {
+//     // progress_old=progress
+//     // renderer.setProgress(progress);
+//     // } else {
 
-    // }
-  }, 1);
+//     // }
+//   }, 1);
+// }
+
+// extend(MyShaderPass);
+
+function Cyl({ rotation, length, position }) {
+  return (
+    <mesh rotation={rotation} position={position}>
+      <cylinderGeometry args={[0.01, 0.01, length, 16]} />
+      <meshStandardMaterial color="white" />
+    </mesh>
+  );
 }
-
-extend(MyShaderPass);
 
 function Home() {
   const intensity = 0.1;
@@ -73,8 +76,6 @@ function Home() {
       x: { value: 0, min: 0, max: 50, step: 10 },
     };
   }, []);
-
-
 
   const pA = useControls("Progress", options);
 
@@ -93,25 +94,29 @@ function Home() {
           near: 0.1,
           far: 20000,
           zoom: 1,
-          position: [pA.x, 0, pA.z],
+          position: [pA.x, 0, 20],
           maxPolarAngle: 0.85,
         }}
+        // dpr={[1, 2]}
       >
-
-          <TextureScene pA={pA} />
+        <TextureScene pA={pA} />
       </Canvas>
       ghfgh
     </div>
   );
 }
 
-export function EnsembleImage({ img_adress, position }) {
+export function EnsembleImage({ img_adress, position, camera_x }) {
   const ref = useRef();
+  const shader2 = useRef();
+  const shader3 = useRef();
   const shader = useRef();
   const mouseTarget = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
 
   const CycleModulo = useRef();
+
+  const compteurCycle = useRef(0);
 
   const couche1 = useRef();
 
@@ -139,16 +144,34 @@ export function EnsembleImage({ img_adress, position }) {
 
   useEffect(() => {
     window.addEventListener("mousemove", (event) => {
-      mouse.current.x = lerp(mouse.current.x, event.clientX / window.screen.width, 0.3); 
-      mouse.current.y = lerp(mouse.current.y, event.clientY / window.screen.width, 0.3); 
+      mouse.current.x = lerp(
+        mouse.current.x,
+        event.clientX / window.screen.width,
+        0.3
+      );
+      mouse.current.y = lerp(
+        mouse.current.y,
+        event.clientY / window.screen.width,
+        0.3
+      );
     });
   });
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     // shader.current.prout = Math.cos(state.clock.getElapsedTime() / 10);
-    // shader.current.uTime = state.clock.getElapsedTime();
+    shader.current.uTime = state.clock.getElapsedTime();
+    shader2.current.uTime = state.clock.getElapsedTime();
+    shader3.current.uTime = state.clock.getElapsedTime();
 
     CycleModulo.current = (state.clock.elapsedTime % 10) / 10;
+
+    if (
+      state.clock.elapsedTime % 10 > 7 &&
+      (state.clock.elapsedTime - delta) % 10 < 7
+    ) {
+      compteurCycle.current += 1;
+      // console.log("aa", compteurCycle.current);
+    }
 
     // couche1.current.position.z =
     //   4 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
@@ -167,10 +190,15 @@ export function EnsembleImage({ img_adress, position }) {
   });
 
   const image = useLoader(THREE.TextureLoader, img_adress);
+  image.colorSpace = THREE.SRGBColorSpace;
+
+  const image2 = useLoader(THREE.TextureLoader, "mushrooms.jpg");
+  image2.colorSpace = THREE.SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
   const mask = useLoader(THREE.TextureLoader, "mask5.jpg");
+  mask.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <group position={position} ref={ref}>
@@ -178,48 +206,150 @@ export function EnsembleImage({ img_adress, position }) {
         scale={[3, 3, 3]}
         anchorX="center" // default
         anchorY="middle" // default
-        color="red"
+        color="white"
         toneMapped={false}
         position={[0, 0, 8]}
         font={"Harmond-ExtraBoldExpanded.otf"}
       >
         Hello
       </Text>
-      {/* <mesh position={[0, 0, 0]} >
+      {/* <mesh position={[0, 0, 0]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <meshStandardMaterial map={image} transparent />
       </mesh> */}
 
-      <mesh ref={couche1} position={[0, 0, 4]} >
+      <mesh ref={couche1} position={[0, 0, 4]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
-          ref={shader}
-          // alphaMap={mask}
+          ref={shader2}
+          uAlphaMap={mask}
           map={image}
+          // map2={image2}
           uTexture={image}
           transparent
+          fond={true}
           // lights="true"
+          toneMapped={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
         />
       </mesh>
 
-      <mesh ref={couche2} position={[0, 0, 8]} >
+      <mesh ref={couche1} position={[0, 0, 8]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          ref={shader3}
+          uAlphaMap={mask}
+          map={image}
+          // map2={image2}
+          uTexture={image}
+          transparent
+          fond={false}
+          // lights="true"
+          toneMapped={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
+        />
+      </mesh>
+
+      <mesh ref={couche1} position={[0, 0, 12]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          ref={shader}
+          uAlphaMap={mask}
+          map={image}
+          // map2={image2}
+          uTexture={image}
+          transparent
+          fond={false}
+          // lights="true"
+          toneMapped={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
+        />
+      </mesh>
+
+      {/* <mesh ref={couche2} position={[0, 0, 8]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          ref={shader2}
+          uAlphaMap={mask}
+          map={image}
+          // map2={image2}
+          uTexture={image}
+          transparent
+          // lights="true"
+          toneMapped={false}
+          fond={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
+        />
+      </mesh>
+
+      <mesh ref={couche3} position={[0, 0, 12]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          ref={shader3}
+          uAlphaMap={mask}
+          map={image}
+          // map2={image2}
+          uTexture={image}
+          transparent
+          // lights="true"
+          toneMapped={false}
+          fond={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
+        />
+      </mesh> */}
+
+      {/* <mesh ref={couche1} position={[102, 0, 4]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          ref={shader}
+          alphaMap={mask}
+          map={image2}
+          // map2={image2}
+          uTexture={image2}
+          transparent
+          // lights="true"
+          toneMapped={false}
+        />
+      </mesh> */}
+
+      {/* <mesh ref={couche2} position={[0, 0, 8]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <meshStandardMaterial alphaMap={mask} map={image} transparent />
-
       </mesh>
 
       <mesh ref={couche3} position={[0, 0, 12]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <meshStandardMaterial alphaMap={mask} map={image} transparent />
-      </mesh> 
+      </mesh> */}
+      {/*
+      <mesh ref={couche2} position={[102, 0, 8]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <meshStandardMaterial alphaMap={mask} map={image2} transparent />
+      </mesh>
+
+      <mesh ref={couche3} position={[102, 0, 12]}>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <meshStandardMaterial alphaMap={mask} map={image2} transparent />
+      </mesh> */}
     </group>
   );
 }
 
-
-
 const WaveShaderMaterial = shaderMaterial(
-  { uTime: 0, uTexture: new THREE.Texture(), prout: 0 },
+  {
+    uTime: 0,
+    uTexture: new THREE.Texture(),
+    prout: 0,
+    uAlphaMap: new THREE.Texture(),
+    fond: false,
+    camera_x: 0,
+    compteurCycle: 0,
+  },
   GLSL`
     varying vec2 vUv;
     void main() {
@@ -231,9 +361,12 @@ const WaveShaderMaterial = shaderMaterial(
     precision mediump float;
     uniform float uTime;
     uniform sampler2D uTexture;
+    uniform sampler2D uAlphaMap;
     uniform vec3 uColor;
     uniform float prout; 
-
+    uniform bool fond;
+    uniform float camera_x;
+    uniform float compteurCycle;
     varying vec2 vUv;
 
     float A;
@@ -253,7 +386,17 @@ const WaveShaderMaterial = shaderMaterial(
   }
 
     void main() {
-      vec2 uv=vUv;
+      vec2 uv;
+      
+      uv.y=vUv.y;
+      
+      // uv.x=vUv.x * 1024. / 1280.;
+      
+      if (mod(floor(uTime/10.),2.0)==0.0){
+        uv.x=vUv.x * 0.5 ;
+      }else{
+        uv.x=vUv.x * 0.5 + 0.5;
+      }
 
       Reste=uTime - 10. * floor(uTime/10.);
 
@@ -261,35 +404,63 @@ const WaveShaderMaterial = shaderMaterial(
       if (Reste>7.){
         A=0.5*sin(PI* (Reste-7.) / 3.);
       }
+      
+      // if (uv.x<0.5){
+      //   uv.x=uv.x + 0.3;
+      // }
 
-      if ( (uTime - 10. * floor(uTime/10.)) >10.){
-        if (uv.x < (.3  )){
-          uv.x=uv.x+0.1;
-        }
+    //   if ( (uTime - 10. * floor(uTime/10.)) >6.){
+    //     if (uv.x < (.3  )){
+    //       uv.x=uv.x+0.1;
+    //     }
 
-        else if (uv.x < (.6  )){
-          uv.x=uv.x+0.3;
-        }
+    //     else if (uv.x < (.6  )){
+    //       uv.x=uv.x+0.3;
+    //     }
 
-        else if (uv.x < (.9  )){
-          uv.x=uv.x+0.1;
-        }
-    }
+    //     else if (uv.x < (.9  )){
+    //       uv.x=uv.x+0.1;
+    //     }
+    // }
+    
+    
 
     if ( (uTime - 10. * floor(uTime/10.)) > 7.){
+      
+      uv = SineWave( uv,A ); 
 
-      // uv.x+=0.1 * sin(10.*uv.x);
-      // uv = SineWave( uv,A ); 
-
+      if (mod(floor(uTime/10.),2.0)==0.0){
+      uv.x=uv.x+(Reste - 7. ) *.5/3.;
+      }
+      else{
+        uv.x=uv.x -(Reste - 7. ) *.5/3.;
+      }
+     
     }
+      
+      // uv = SineWave( uv,A );
+    uv.x=uv.x + (camera_x )/100.;
+    // }
+    
 
 
     // uv=vUv;
       vec3 texture = texture2D(uTexture, uv).rgb;
-      // texture.r+=0.1;
-      // texture.g+=0.1;
-      // texture.b+=0.1;
-      gl_FragColor = vec4(texture, 1.0);
+      float alpha=1.;
+      if (((vUv.x - .5) * (vUv.x - .5) + (vUv.y - .5)*(vUv.y - .5)) <.2){
+        alpha=0.;
+      }
+      float d = sqrt(dot(vUv - vec2(.5,.5),vUv - vec2(.5,.5)));
+      float t2 = smoothstep(.3, .3+0.1, d);
+      if (fond==true){
+        t2=1.;
+      }
+      
+      alpha=smoothstep(0.,1.,(vUv.x - .5) * (vUv.x - .5) + (vUv.y - .5)*(vUv.y - .5));
+
+      gl_FragColor = vec4(texture, t2);
+      #include <tonemapping_fragment>
+#include <encodings_fragment>
     }
   `
 );
@@ -297,6 +468,8 @@ const WaveShaderMaterial = shaderMaterial(
 extend({ WaveShaderMaterial });
 
 export function TextureScene({ pA }) {
+  // const camera_x = useRef(0);
+  var camera_x;
   useFrame((state) => {
     // state.camera.position.z =
     // 20 + Math.sin(state.clock.getElapsedTime() * 0.5) * 3;
@@ -309,13 +482,50 @@ export function TextureScene({ pA }) {
     if (state.clock.elapsedTime % 5 < 1) {
       // console.log(state.camera.position);
     }
+
+    if (state.clock.elapsedTime > 10 && state.camera.position.x < 100) {
+      // console.log(state.camera);
+      // state.camera.position.x += 0.1;
+      // state.camera.lookAt(state.camera.position.x + 0.1, 0, 0);
+    }
+    camera_x = state.camera.position.x;
+    state.camera.lookAt(state.camera.position.x, 0, 0);
+    // console.log(camera_x);
   });
   return (
     <>
       <ambientLight intensity={1} />
       <spotLight position={[10, 10, 10]} angle={45} penumbra={0} />
 
-      <EnsembleImage position={[0, 0, -20]} img_adress="nature_morte.jpg" />
+      <EnsembleImage
+        position={[0, 0, -20]}
+        img_adress="concat2.jpg"
+        camera_x={camera_x}
+      />
+      {/* <EnsembleImage
+        position={[102, 0, -20]}
+        img_adress="mushrooms.jpg"
+        camera_x={camera_x}
+      /> */}
+      <Cyl rotation={[0, 0, Math.PI / 4]} position={[25, 0, 2]} length={50} />
+
+      <Cyl
+        rotation={[0, 0, 0.1 + (3 * Math.PI) / 4]}
+        position={[-25, 0, 2]}
+        length={50}
+      />
+
+      <Cyl
+        rotation={[0, Math.PI / 4, 0.1 + Math.PI / 2]}
+        position={[-25, 0, 2]}
+        length={50}
+      />
+
+      <Cyl
+        rotation={[0, -Math.PI / 2, 0.1 + Math.PI / 2]}
+        position={[25, 0, 2]}
+        length={50}
+      />
       {/* <ShootingStar /> */}
       <OrbitControls />
     </>
