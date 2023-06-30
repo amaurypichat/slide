@@ -18,6 +18,8 @@
     "autoprefixer": "^10.4.14",
     "babel-plugin-glsl": "^1.0.0",
     "gl-react": "^5.2.0",
+    "gl-react-dom": "^5.2.1",
+    "gl-react-headless": "^5.2.1",
     "glsl-random": "^0.0.5",
     "leva": "^0.9.27",
     "next": "^13.1.5",

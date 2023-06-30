@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 import * as THREE from "three";
 
-import { useEffect, useRef, useMemo } from "react";
-
+import { useEffect, useRef, useMemo, useState } from "react";
+import { Debug, Physics, usePlane, useSphere } from "@react-three/cannon";
 import {
   Canvas,
   useLoader,
@@ -13,6 +13,7 @@ import {
 import { GLSL } from "gl-react";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { useControls } from "leva";
+
 // import MyShaderPass from "component_landingpage/shaderpass";
 
 import {
@@ -23,8 +24,6 @@ import {
   AdaptiveDpr,
   PerformanceMonitor,
 } from "@react-three/drei";
-
-
 
 function Cyl({ rotation, length, position }) {
   return (
@@ -74,7 +73,6 @@ function Home() {
       >
         <TextureScene pA={pA} />
       </Canvas>
-      ghfgh
     </div>
   );
 }
@@ -146,17 +144,25 @@ export function EnsembleImage({ img_adress, position, camera_x }) {
       // console.log("aa", compteurCycle.current);
     }
 
-    // couche1.current.position.z =
-    //   4 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
+    couche1.current.position.z =
+      4 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
 
-    // couche2.current.position.z =
-    //   8 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
+    couche2.current.position.z =
+      8 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
 
-    // couche3.current.position.z =
-    //   12 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
+    couche3.current.position.z =
+      12 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
+
+    state.camera.position.y =
+      5 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 20);
+
+    state.camera.lookAt(
+      0,
+      5 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 20),
+      0
+    );
 
     if (state.clock.elapsedTime % 10 < 1) {
-      // state.camera.position.z=4.5;
       // console.log("meshpos", cam.current.position);
       // console.log("camerapos", state.camera.position);
     }
@@ -173,19 +179,20 @@ export function EnsembleImage({ img_adress, position, camera_x }) {
   const mask = useLoader(THREE.TextureLoader, "mask5.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
+  // const siteExemple = useLoader(THREE.TextureLoader, "SiteExemple.JPG");
+  // siteExemple.colorSpace = THREE.SRGBColorSpace;
+
+  // const sitePlanete = useLoader(THREE.TextureLoader, "SitePlanete.JPG");
+  // sitePlanete.colorSpace = THREE.SRGBColorSpace;
+
+  // const siteAgap2 = useLoader(THREE.TextureLoader, "agap2.JPG");
+  // siteAgap2.colorSpace = THREE.SRGBColorSpace;
+
   return (
     <group position={position} ref={ref}>
-      <Text
-        scale={[3, 3, 3]}
-        anchorX="center" // default
-        anchorY="middle" // default
-        color="white"
-        toneMapped={false}
-        position={[0, 0, 8]}
-        font={"Harmond-ExtraBoldExpanded.otf"}
-      >
-        Hello
-      </Text>
+      <Physics allowSleep={false} gravity={[0, 0, 0]}>
+        <Ttext />
+      </Physics>
       {/* <mesh position={[0, 0, 0]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <meshStandardMaterial map={image} transparent />
@@ -208,7 +215,7 @@ export function EnsembleImage({ img_adress, position, camera_x }) {
         />
       </mesh>
 
-      <mesh ref={couche1} position={[0, 0, 8]}>
+      <mesh ref={couche2} position={[0, 0, 8]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           ref={shader3}
@@ -225,7 +232,7 @@ export function EnsembleImage({ img_adress, position, camera_x }) {
         />
       </mesh>
 
-      <mesh ref={couche1} position={[0, 0, 12]}>
+      <mesh ref={couche3} position={[0, 0, 12]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           ref={shader}
@@ -365,17 +372,27 @@ const WaveShaderMaterial = shaderMaterial(
       
       // uv.x=vUv.x * 1024. / 1280.;
       
-      if (mod(floor(uTime/10.),2.0)==0.0){
-        uv.x=vUv.x * 0.5 ;
-      }else{
+      // if (mod(floor(uTime/10.),2.0)==0.0 && floor(uTime/10.)>=2.0 ){
+      //   uv.x=vUv.x * 0.33 + 0.66;
+      // }else if (mod(floor(uTime/10.),1.0)==0.0 && floor(uTime/10.)>=1.0 ){
+      //   uv.x=vUv.x * 0.33 + 0.33;
+      // }else{
+      //   uv.x=vUv.x * 0.33;
+      // }
+      
+      if (mod(floor(uTime/10.) - 1.,2.0)==0.0 && floor(uTime/10.)>=1.0 ){
         uv.x=vUv.x * 0.5 + 0.5;
+      // }else if (mod(floor(uTime/10.),1.0)==0.0 && floor(uTime/10.)>=1.0 ){
+      //   uv.x=vUv.x * 0.33 + 0.33;
+      }else{
+        uv.x=vUv.x * 0.5;
       }
 
       Reste=uTime - 10. * floor(uTime/10.);
 
       A=0.;
       if (Reste>7.){
-        A=0.5*sin(PI* (Reste-7.) / 3.);
+        A=0.5 * sin(PI* (Reste-7.) / 3.);
       }
       
       // if (uv.x<0.5){
@@ -398,22 +415,38 @@ const WaveShaderMaterial = shaderMaterial(
     
     
 
-    if ( (uTime - 10. * floor(uTime/10.)) > 7.){
+    if ( uTime - 10. * floor(uTime/10.) > 7.){
       
       uv = SineWave( uv,A ); 
+      
+      // uv.x=uv.x+(Reste - 7. ) *.33/3.;
 
-      if (mod(floor(uTime/10.),2.0)==0.0){
-      uv.x=uv.x+(Reste - 7. ) *.5/3.;
+      if (mod(floor(uTime/10.),2.0)==0.0 && floor(uTime/10.)>=2.0 ){
+        // uv.x=vUv.x * 0.33 + 0.66;
+      uv.x=uv.x-(Reste - 7. ) *.5/3.;
       }
       else{
-        uv.x=uv.x -(Reste - 7. ) *.5/3.;
+        uv.x=uv.x +(Reste - 7. ) *.5/3.;
       }
      
     }
+    
+    // if ( uTime - 10. * floor(uTime/10.) > 2. ){
       
-      // uv = SineWave( uv,A );
-    uv.x=uv.x + (camera_x )/100.;
+    //       if (uv.x < (.15  )){
+    //       uv.x=uv.x+0.1;
+    //     }
+
+    //     else if (uv.x < (.4  )){
+    //       uv.x=uv.x-0.1;
+    //     }
+
+    //     else if (uv.x < (.5  )){
+    //       uv.x=uv.x-0.2;
+    //     }
+     
     // }
+      
     
 
 
@@ -462,7 +495,7 @@ export function TextureScene({ pA }) {
       // state.camera.lookAt(state.camera.position.x + 0.1, 0, 0);
     }
     camera_x = state.camera.position.x;
-    state.camera.lookAt(state.camera.position.x, 0, 0);
+    // state.camera.lookAt(state.camera.position.x, 0, 0);
     // console.log(camera_x);
   });
   return (
@@ -500,8 +533,47 @@ export function TextureScene({ pA }) {
         length={50}
       />
       {/* <ShootingStar /> */}
-      <OrbitControls />
+      {/* <OrbitControls /> */}
     </>
+  );
+}
+
+function Ttext() {
+  const y = useRef(0);
+  const reftext = useRef();
+
+  let mouseTarget = useRef({ y: 0 });
+
+  useFrame((state) => {
+    reftext.current.position.y = lerp(
+      reftext.current.position.y,
+      mouseTarget.current.y,
+      0.3
+    );
+  });
+
+
+  useEffect(() => {
+    addEventListener("wheel", (event) => {
+
+      mouseTarget.current.y += event.deltaY / 100;
+
+    });
+  });
+
+  return (
+    <Text
+      ref={reftext}
+      scale={[3, 3, 3]}
+      anchorX="center" // default
+      anchorY="middle" // default
+      color="white"
+      toneMapped={false}
+      position={[0, 5, 8]}
+      font={"Harmond-ExtraBoldExpanded.otf"}
+    >
+      Hello
+    </Text>
   );
 }
 
