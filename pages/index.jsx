@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import * as THREE from "three";
-
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { useEffect, useRef, useMemo, useState } from "react";
 import { Debug, Physics, usePlane, useSphere } from "@react-three/cannon";
 import {
@@ -10,9 +10,18 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
+import {
+  postprocessing,
+  EffectComposer,
+  Bloom,
+} from "@react-three/postprocessing";
 import { GLSL } from "gl-react";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { useControls } from "leva";
+
+import RoundedBoxGeometry from "./../boxgeo.js";
+
+extend({ RoundedBoxGeometry });
 
 // import MyShaderPass from "component_landingpage/shaderpass";
 
@@ -61,7 +70,7 @@ function Home() {
       }}
     >
       <Canvas
-        gl={{ antialias: false }}
+        gl={{ antialias: true }}
         camera={{
           near: 0.1,
           far: 20000,
@@ -72,8 +81,103 @@ function Home() {
         // dpr={[1, 2]}
       >
         <TextureScene pA={pA} />
+        {/* <BoxTransparent /> */}
       </Canvas>
     </div>
+  );
+}
+
+function BoxTransparent() {
+  const refBox = useRef();
+  const options = {
+    transmission: 1,
+    thickness: 2.2,
+    roughness: 0.0,
+    envMapIntensity: 1.5,
+    clearcoat: 1,
+    clearcoatRoughness: 0.0,
+    normalScale: 0,
+    clearcoatNormalScale: 3.13,
+    normalRepeat: 1,
+    bloomThreshold: 0.85,
+    bloomStrength: 0.5,
+    bloomRadius: 0.33,
+  };
+
+  // const normalMapTexture = textureLoader.load("normal.jpg");
+  const normalMapTexture = useLoader(THREE.TextureLoader, "normal.jpg");
+  const loader = new RGBELoader();
+
+  // const hdrEquirect = new THREE.RGBELoader().load(
+  //   "empty_warehouse_01_2k.hdr",
+  //   () => {
+  //     hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+  //   }
+  // );
+
+  // const hdrEquirect = useLoader(THREE.RGBELoader, "normal.jpg", () => {
+  //   hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+  // });
+
+  useFrame((state) => {
+    refBox.current.rotation.x += 0.01;
+    refBox.current.rotation.y += 0.01;
+  });
+
+  const options2 = useMemo(() => {
+    return {
+      transmission: { value: 0, min: 0, max: 1, step: 0.01 },
+      x: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+      y: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+      z: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
+      visible: true,
+      color: { value: "lime" },
+    };
+  }, []);
+
+  const pA = useControls("Polyhedron A", options2);
+  // const pB = useControls("Polyhedron B", options2);
+
+  return (
+    <>
+      <EffectComposer>
+        <Bloom
+          luminanceThreshold={0.85}
+          // luminanceSmoothing={luminanceSmoothing}
+          // height={300},
+          mipmapBlur={true}
+          intensity={0.5}
+          radius={0.33}
+        />
+      </EffectComposer>
+      <mesh>
+        <planeGeometry args={[10, 10, 9]} />
+        <meshStandardMaterial color={"blue"} />
+      </mesh>
+      <mesh position={[0, pA.x, 0]} ref={refBox}>
+        <roundedBoxGeometry args={[10, 10, 1, 16, 2]} />
+        <meshPhysicalMaterial
+          // transmission={pA.transmission}
+          // thickness={options.thickness}
+          // roughness={options.roughness}
+          transmission={0}
+          thickness={0}
+          roughness={0}
+          color="white"
+          transparent={true}
+          opacity={1}
+          // // envMap={hdrEquirect}
+          // envMapIntensity={options.envMapIntensity}
+          // clearcoat={options.clearcoat}
+          // clearcoatRoughness={options.clearcoatRoughness}
+          // normalScale={new THREE.Vector2(options.normalScale)}
+          // normalMap={normalMapTexture}
+          // clearcoatNormalMap={normalMapTexture}
+          // clearcoatNormalScale={new THREE.Vector2(options.clearcoatNormalScale)}
+          // transparent
+        />
+      </mesh>
+    </>
   );
 }
 
@@ -348,8 +452,11 @@ const WaveShaderMaterial = shaderMaterial(
     uniform float camera_x;
     uniform float compteurCycle;
     varying vec2 vUv;
+    
 
     float A;
+    
+    integer nEcran;
 
     float Reste;
     float ambientStrength = 0.1;
@@ -363,6 +470,16 @@ const WaveShaderMaterial = shaderMaterial(
       float t = 30.0*pi/180.0;
       float y = sin( w*p.x + t) * A; 
       return vec2(p.x, p.y+y);
+  }
+  
+  vec2 Point( vec2 p){
+    float d = sqrt(dot(p - vec2(.33,.5) * 10./7.,p - vec2(.33,.5)));
+    
+      if (d<0.1){
+        p.x=p.x+0.333;
+      }
+      
+      return p;
   }
 
     void main() {
@@ -382,10 +499,13 @@ const WaveShaderMaterial = shaderMaterial(
       
       if (mod(floor(uTime/10.) - 1.,2.0)==0.0 && floor(uTime/10.)>=1.0 ){
         uv.x=vUv.x * 0.5 + 0.5;
+        nEcran=1;
       // }else if (mod(floor(uTime/10.),1.0)==0.0 && floor(uTime/10.)>=1.0 ){
       //   uv.x=vUv.x * 0.33 + 0.33;
+      nEcran=2;
       }else{
         uv.x=vUv.x * 0.5;
+        nEcran=3;
       }
 
       Reste=uTime - 10. * floor(uTime/10.);
@@ -427,9 +547,12 @@ const WaveShaderMaterial = shaderMaterial(
       }
       else{
         uv.x=uv.x +(Reste - 7. ) *.5/3.;
+        
       }
      
     }
+    
+    uv=Point(uv);
     
     // if ( uTime - 10. * floor(uTime/10.) > 2. ){
       
@@ -532,8 +655,6 @@ export function TextureScene({ pA }) {
         position={[25, 0, 2]}
         length={50}
       />
-      {/* <ShootingStar /> */}
-      {/* <OrbitControls /> */}
     </>
   );
 }
@@ -552,12 +673,9 @@ function Ttext() {
     );
   });
 
-
   useEffect(() => {
     addEventListener("wheel", (event) => {
-
       mouseTarget.current.y += event.deltaY / 100;
-
     });
   });
 
