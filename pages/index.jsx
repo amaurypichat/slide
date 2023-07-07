@@ -456,7 +456,7 @@ const WaveShaderMaterial = shaderMaterial(
 
     float A;
     
-    integer nEcran;
+    float nEcran;
 
     float Reste;
     float ambientStrength = 0.1;
@@ -473,7 +473,7 @@ const WaveShaderMaterial = shaderMaterial(
   }
   
   vec2 Point( vec2 p){
-    float d = sqrt(dot(p - vec2(.33,.5) * 10./7.,p - vec2(.33,.5)));
+    float d = sqrt(dot(p - vec2(.33,.5)),p - vec2(.33,.5)));
     
       if (d<0.1){
         p.x=p.x+0.333;
@@ -499,13 +499,13 @@ const WaveShaderMaterial = shaderMaterial(
       
       if (mod(floor(uTime/10.) - 1.,2.0)==0.0 && floor(uTime/10.)>=1.0 ){
         uv.x=vUv.x * 0.5 + 0.5;
-        nEcran=1;
+        nEcran=1.;
       // }else if (mod(floor(uTime/10.),1.0)==0.0 && floor(uTime/10.)>=1.0 ){
       //   uv.x=vUv.x * 0.33 + 0.33;
-      nEcran=2;
+      // nEcran=2.;
       }else{
         uv.x=vUv.x * 0.5;
-        nEcran=3;
+        nEcran=3.;
       }
 
       Reste=uTime - 10. * floor(uTime/10.);
