@@ -22,7 +22,7 @@ import {
   EffectComposer,
   Bloom,
 } from "@react-three/postprocessing";
-import { GLSL } from "gl-react";
+// import { GLSL } from "gl-react";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { useControls } from "leva";
 import WaveShaderMaterial from "./shader";
@@ -92,13 +92,20 @@ function Home() {
     };
   }, []);
 
-  // const pA = useControls("Progress", options);
-
   return (
     <>
       <div className="app">
         <h1>Welcome to my website</h1>
         <CookieConsent />
+      </div>
+      <div
+        className="position-fixed top-0 right-0 bg-white rounded-full pe-4"
+        style={{
+          height: "32px",
+          width: "32px",
+        }}
+      >
+        <h1 className="text-3xl font-bold underline">Hello world!</h1>
       </div>
       <div
         style={{
