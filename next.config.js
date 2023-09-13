@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@react-three/drei"],
-  basePath:"/fleur",
+  basePath:"/slide",
 
   webpack: (config, { isServer }) => {
     // If client-side, don't polyfill `fs`

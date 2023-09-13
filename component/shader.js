@@ -57,6 +57,8 @@ const WaveShaderMaterial = shaderMaterial(
 
     float Reste;
 
+   
+
     #define PI 3.1415926538
 
     vec2 SineWave( vec2 p, float A ){
@@ -118,8 +120,8 @@ const WaveShaderMaterial = shaderMaterial(
 
   vec4 transition4(vec2 p,float progress) {
     float size= 0.04;
-float zoom= 50.0;
-float colorSeparation= 0.3;
+    float zoom= 50.0;
+    float colorSeparation= 0.3;
     float inv = 1. - progress;
     vec2 disp = size*vec2(cos(zoom*p.x), sin(zoom*p.y));
     vec4 texTo = getToColor(p + inv*disp);
@@ -135,7 +137,7 @@ float colorSeparation= 0.3;
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
   }
   
-  vec4 transition5(vec2 p,float progress) {
+  vec4 transitionCarreau(vec2 p,float progress) {
     ivec2 size= ivec2(10, 10);
 float smoothness= 0.5;
     float r = rand(floor(vec2(size) * p));
@@ -152,12 +154,17 @@ float smoothness= 0.5;
       
       uv.y=vUv.y;
 
+      // uTime=uTime-8.;
+
       Reste=uTime - 10. * floor(uTime/10.);
 
       float dim_image;
       float dim_image1=994.;
       float dim_image2=1080.;
       float dim_image3=960.;
+      dim_image1=26.29;
+      dim_image2=28.59;
+      dim_image3=28.59;
       dim_image=(dim_image1 + dim_image2 + dim_image3 );
 
       
@@ -230,7 +237,7 @@ float smoothness= 0.5;
       float progress=uTime - 3. * floor(uTime/3.);
       // gl_FragColor = transition2(uv,progress / 2.);
 
-      vec4 aa=transition5(uv,progress / 2.);
+      vec4 aa=transitionCarreau(uv,progress / 2.);
       if (filigrane){
         t2=(aa.r +  aa.g + aa.b ) /6.;
       }

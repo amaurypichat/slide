@@ -2,3 +2,32 @@
     font-family: "harmond";
     src: url("./../public/Harmond-ExtraBoldExpanded.otf") format("opentype");
 }
+
+.greybar {
+    height: 5vh;
+    background-color: rgb(233, 241, 8);
+    left: 0px;
+    top: 50vh;
+    /* width:100px; */
+    position: fixed;
+    z-index: 1000;
+}
+
+.wrapGreybar {
+    height: 10vh;
+    left: 0px;
+    top: 0;
+    width: 100vw;
+    position: fixed;
+    z-index: 0;
+}
+
+#div_canvas {
+    /* visibility: hidden; */
+    /* display: none; */
+}
+
+#menu {
+    /* visibility: hidden; */
+    /* display: none; */
+}

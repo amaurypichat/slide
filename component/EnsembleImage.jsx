@@ -52,9 +52,13 @@ export default function EnsembleImage({ position, camera_x }) {
 
   const couche3_bis = useRef();
 
-  const listeRef = [couche1,couche2, couche3, couche3_bis];
+  const listeRef = [couche1, couche2, couche3, couche3_bis];
 
   var viewport = useThree((state) => state.viewport);
+
+  const start = useRef(false);
+
+  let delayClock=0
 
   useFrame(({ clock, camera }) => {
     mouseTarget.current.x = -lerp(mouse.current.y, 0, 0.3);
@@ -80,15 +84,38 @@ export default function EnsembleImage({ position, camera_x }) {
     for (let i = 0; i < listeRef.length; i++) {
       listeRef[i].current.material.resolution =
         window.innerHeight / window.innerWidth;
-      // console.log(window.innerHeight / window.innerWidth);
     }
+
+    // useEffect(()=>{
+      // console.log("EnsembleImage",Date.now() / 1000)
+    // })
   });
+
+ 
 
   useFrame((state, delta) => {
     // couche1.current.material.prout = Math.cos(state.clock.getElapsedTime() / 10);
 
+    
+
+    // state.clock.
+
+    // delayClock+=delta
+
+    // if (!start.current){
+      // state.clock.stop()
+    // }
+
+    // if (state.clock.getElapsedTime()>8 && !start.current ){
+      // console.log("rr",state.clock.getElapsedTime())
+      // state.clock.start()
+      // start.current=true
+      // console.log("rr",delayClock)
+    // }
+
+
     for (let i = 0; i < listeRef.length; i++) {
-      listeRef[i].current.material.uTime = state.clock.getElapsedTime();
+      listeRef[i].current.material.uTime = state.clock.elapsedTime;
     }
     // couche1.current.material.uTime = state.clock.getElapsedTime();
     // couche2.current.material.uTime = state.clock.getElapsedTime();
@@ -167,67 +194,67 @@ export default function EnsembleImage({ position, camera_x }) {
     );
   });
 
-  const image = useLoader(THREE.TextureLoader, "fleur/concat7.jpg");
+  const image = useLoader(THREE.TextureLoader, "/slide/image3.png");
   image.colorSpace = THREE.SRGBColorSpace;
 
-  // const image2 = useLoader(THREE.TextureLoader, "fleur/mushrooms.jpg");
+  // const image2 = useLoader(THREE.TextureLoader, "/slide/mushrooms.jpg");
   // image2.colorSpace = THREE.SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
-  const mask = useLoader(THREE.TextureLoader, "fleur/mask5.jpg");
+  const mask = useLoader(THREE.TextureLoader, "/slide/mask5.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const maskDesert = useLoader(THREE.TextureLoader, "fleur/maskDesert.png");
+  const maskDesert = useLoader(THREE.TextureLoader, "/slide/maskDesert.png");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const transition_shape = useLoader(THREE.TextureLoader, "fleur/spiral.png");
+  const transition_shape = useLoader(THREE.TextureLoader, "/slide/spiral.png");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image2 = useLoader(THREE.TextureLoader, "fleur/ds.jpg");
+  const image2 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const map = useLoader(THREE.TextureLoader, "fleur/terrasse.jpg");
+  const map = useLoader(THREE.TextureLoader, "/slide/terrasse.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image3 = useLoader(THREE.TextureLoader, "fleur/ds.jpg");
+  const image3 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image1 = useLoader(THREE.TextureLoader, "fleur/nature_morte.jpg");
+  const image1 = useLoader(THREE.TextureLoader, "/slide/nature_morte.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
 
-  // const image3 = useLoader(THREE.TextureLoader, "fleur/ds.jpg");
+  // const image3 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
   // mask.colorSpace = THREE.SRGBColorSpace;
 
-  // const transition_shape = useLoader(THREE.TextureLoader, "fleur/spiral.png");
+  // const transition_shape = useLoader(THREE.TextureLoader, "/slide/spiral.png");
   // mask.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <group position={position} ref={ref}>
       <Physics allowSleep={false} gravity={[0, 0, 0]}>
-        <Ttext />
+        <Ttext  />
       </Physics>
 
       <mesh ref={couche1} position={[0, 0, 4]}>
-          <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-          <waveShaderMaterial
-            // ref={shader2}
-            uAlphaMap={image}
-            map={image}
-            map2={image2}
-            image3={image3}
-            image1={image1}
-            uTexture={image}
-            fond={true}
-            toneMapped={false}
-            camera_x={camera_x}
-            compteurCycle={compteurCycle.current}
-            color="black"
-            filigrane={false}
-            _resolution={0.0}
-            transition_shape={transition_shape}
-          />
-        </mesh>
+        <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
+        <waveShaderMaterial
+          // ref={shader2}
+          uAlphaMap={image}
+          map={image}
+          map2={image2}
+          image3={image3}
+          image1={image1}
+          uTexture={image}
+          fond={true}
+          toneMapped={false}
+          camera_x={camera_x}
+          compteurCycle={compteurCycle.current}
+          color="black"
+          filigrane={false}
+          _resolution={0.0}
+          transition_shape={transition_shape}
+        />
+      </mesh>
 
       {/* <mesh ref={couche1_bis} position={[0, 0, 4.1]}>
           <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
@@ -264,7 +291,7 @@ export default function EnsembleImage({ position, camera_x }) {
           _resolution={0.0}
           transition_shape={transition_shape}
           image3={image3}
-            image1={image1}
+          image1={image1}
         />
       </mesh>
 
@@ -304,7 +331,7 @@ export default function EnsembleImage({ position, camera_x }) {
           _resolution={0.0}
           transition_shape={transition_shape}
           image3={image3}
-            image1={image1}
+          image1={image1}
         />
       </mesh>
 
@@ -327,7 +354,7 @@ export default function EnsembleImage({ position, camera_x }) {
           _resolution={0.0}
           transition_shape={transition_shape}
           image3={image3}
-            image1={image1}
+          image1={image1}
         />
       </mesh>
     </group>
@@ -338,15 +365,35 @@ function Ttext() {
   const y = useRef(0);
   const refOldScreenHeight = useRef(0);
   const reftext = useRef();
-
+  const compteurCycle = useRef(1);
   let mouseTarget = useRef({ y: 0 });
 
-  useFrame((state) => {
+  useFrame((state,delta) => {
     reftext.current.position.y = lerp(
       reftext.current.position.y,
       mouseTarget.current.y,
       0.3
     );
+
+    if (
+      Math.floor(state.clock.elapsedTime / 10) !=
+      Math.floor((state.clock.elapsedTime - delta) / 10)
+    ) {
+      if (compteurCycle.current == 3) {
+        compteurCycle.current = 1;
+      } else {
+        compteurCycle.current += 1;
+      }
+    }
+    
+    if (compteurCycle.current == 3) {
+      reftext.current.outlineColor = "black";
+    } else {
+      reftext.current.outlineColor = "green";
+    }
+
+
+    
   });
 
   useEffect(() => {
@@ -370,9 +417,9 @@ function Ttext() {
         color="white"
         toneMapped={false}
         position={[0, 15, 13.2]}
-        font={"fleur/Roboto-Regular.ttf"}
+        font={"/slide/Roboto-Regular.ttf"}
         outlineWidth="1%"
-        outlineColor="green"
+        // outlineColor="green"
       >
         Hello
       </Text>

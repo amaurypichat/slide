@@ -1,6 +1,8 @@
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { Html } from "@react-three/drei";
 import {
   useEffect,
   useRef,
@@ -8,6 +10,7 @@ import {
   useState,
   forwardRef,
   useLayoutEffect,
+  Suspense,
 } from "react";
 
 import {
@@ -29,15 +32,11 @@ import { lerp, damp } from "three/src/math/MathUtils";
 import RoundedBoxGeometry from "./../boxgeo.js";
 import CookieConsent from "../component/CookieConsent";
 
-import {
-  OrbitControls
-
-} from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 
 import EnsembleImage from "@/component/EnsembleImage";
 
 extend({ RoundedBoxGeometry });
-
 
 const Cyl = forwardRef(({ rotation, length, position }, ref) => (
   <mesh ref={ref} rotation={rotation} position={position}>
@@ -61,12 +60,34 @@ function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    var first = true;
+    // if (first) {
+    //   for (let pas = 0; pas < 110; pas = pas + 1) {
+    //     setTimeout(() => {
+    //       document.querySelector(".greybar").style.width = pas + "vw";
+    //     }, 80 * pas);
+    //   }
+
+    //   setTimeout(() => {
+    //     document.querySelector(".wrapGreybar").style.display = "none";
+    //     document.querySelector("#div_canvas").style.visibility = "visible";
+    //     document.querySelector("#menu").style.visibility = "visible";
+    //     // document.querySelector("#div_canvas").style.display = "block";
+    //   }, 8000);
+    // }
+  });
+
   return (
     <>
       {/* <CookieConsent /> */}
+      <Head>
+        <title>Book A.PICHAT</title>
+        <link rel="shortcut icon" href="/slide/favicon.ico" />
+      </Head>
 
-  
       <div
+        id="menu"
         className="flex flex-col space-y-1 justify-center fixed top-2 right-2 bg-white rounded-full px-2 m-1 z-50 cursor-pointer"
         style={{
           height: "32px",
@@ -93,6 +114,7 @@ function Home() {
         ></div>
       </div>
       <div
+        id="div_canvas"
         style={{
           background: "black",
           height: "100vh",
@@ -110,11 +132,18 @@ function Home() {
             maxPolarAngle: 0.85,
           }}
         >
-          <TextureScene />
+          {/* <Suspense
+            fallback={<Html center className="loading" children="Loading..." />}
+          > */}
+            <TextureScene />
+          {/* </Suspense> */}
           {/* <BoxTransparent /> */}
           {/* <Cyl2 /> */}
           {/* <OrbitControls /> */}
         </Canvas>
+      </div>
+      <div className="wrapGreybar">
+        <div className="greybar"></div>
       </div>
     </>
   );
@@ -140,8 +169,6 @@ function BoxTransparent() {
   // const normalMapTexture = textureLoader.load("normal.jpg");
   const normalMapTexture = useLoader(THREE.TextureLoader, "normal.jpg");
   const loader = new RGBELoader();
-
-
 
   useFrame((state) => {
     refBox.current.rotation.x += 0.01;
@@ -205,10 +232,6 @@ function BoxTransparent() {
   );
 }
 
-
-
-
-
 export function TextureScene() {
   // const camera_x = useRef(0);
   var camera_x;
@@ -217,7 +240,6 @@ export function TextureScene() {
 
   useFrame((state) => {
     // if (state.clock.elapsedTime % 5 < 1) {
-    //   // console.log(state.camera.position);
     // }
 
     // if (state.clock.elapsedTime > 10 && state.camera.position.x < 100) {
@@ -225,6 +247,10 @@ export function TextureScene() {
     // }
 
     camera_x = state.camera.position.x;
+  });
+
+  useEffect(() => {
+    console.log(Date.now() / 1000);
   });
 
   function gaussianRand() {
@@ -241,16 +267,11 @@ export function TextureScene() {
       <ambientLight intensity={1} />
       <spotLight position={[10, 10, 10]} angle={45} penumbra={0} />
       {/* <axesHelper args={[5]} /> */}
-      <EnsembleImage
-        position={[0, 0, -20]}
-        camera_x={camera_x}
-      />
-
+      <EnsembleImage position={[0, 0, -20]} camera_x={camera_x} />
 
       {[...Array(3)].map((x, i) => {
         return (
           <>
-          
             <TraitBlanc
               ref={ref33}
               key={Math.random()}
@@ -262,7 +283,6 @@ export function TextureScene() {
     </>
   );
 }
-
 
 const TraitBlanc = forwardRef(({ rotation, position }, ref) => {
   const ref2 = useRef();
@@ -290,8 +310,6 @@ const TraitBlanc = forwardRef(({ rotation, position }, ref) => {
   useLayoutEffect(() => {
     Inittt();
   }, []);
-
-
 
   function Inittt() {
     posCercle = (Math.PI * Math.random()) / 4;
@@ -349,8 +367,6 @@ const TraitBlanc = forwardRef(({ rotation, position }, ref) => {
     </line>
   );
 });
-
-
 
 export default dynamic(() => Promise.resolve(Home), {
   ssr: false,
