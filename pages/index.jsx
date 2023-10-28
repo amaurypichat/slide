@@ -50,7 +50,6 @@ function Home() {
   const radius = 0.9;
   const luminanceThreshold = 1;
   const luminanceSmoothing = 1;
-  // var OrbitControls;
   const options = useMemo(() => {
     return {
       progress: { value: 0, min: 0, max: 1, step: 0.1 },
@@ -132,14 +131,11 @@ function Home() {
             maxPolarAngle: 0.85,
           }}
         >
-          {/* <Suspense
+          <Suspense
             fallback={<Html center className="loading" children="Loading..." />}
-          > */}
+          >
             <TextureScene />
-          {/* </Suspense> */}
-          {/* <BoxTransparent /> */}
-          {/* <Cyl2 /> */}
-          {/* <OrbitControls /> */}
+          </Suspense>
         </Canvas>
       </div>
       <div className="wrapGreybar">
@@ -149,88 +145,7 @@ function Home() {
   );
 }
 
-function BoxTransparent() {
-  const refBox = useRef();
-  const options = {
-    transmission: 1,
-    thickness: 2.2,
-    roughness: 0.0,
-    envMapIntensity: 1.5,
-    clearcoat: 1,
-    clearcoatRoughness: 0.0,
-    normalScale: 0,
-    clearcoatNormalScale: 3.13,
-    normalRepeat: 1,
-    bloomThreshold: 0.85,
-    bloomStrength: 0.5,
-    bloomRadius: 0.33,
-  };
 
-  // const normalMapTexture = textureLoader.load("normal.jpg");
-  const normalMapTexture = useLoader(THREE.TextureLoader, "normal.jpg");
-  const loader = new RGBELoader();
-
-  useFrame((state) => {
-    refBox.current.rotation.x += 0.01;
-    refBox.current.rotation.y += 0.01;
-  });
-
-  const options2 = useMemo(() => {
-    return {
-      transmission: { value: 0, min: 0, max: 1, step: 0.01 },
-      x: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-      y: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-      z: { value: 0, min: 0, max: Math.PI * 2, step: 0.01 },
-      visible: true,
-      color: { value: "lime" },
-    };
-  }, []);
-
-  // const pA = useControls("Polyhedron A", options2);
-  // const pB = useControls("Polyhedron B", options2);
-
-  return (
-    <>
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.85}
-          // luminanceSmoothing={luminanceSmoothing}
-          // height={300},
-          mipmapBlur={true}
-          intensity={0.5}
-          radius={0.33}
-        />
-      </EffectComposer>
-      <mesh>
-        <planeGeometry args={[10, 10, 9]} />
-        <meshStandardMaterial color={"blue"} />
-      </mesh>
-      <mesh position={[0, 0, 0]} ref={refBox}>
-        <roundedBoxGeometry args={[10, 10, 1, 16, 2]} />
-        <meshPhysicalMaterial
-          // transmission={pA.transmission}
-          // thickness={options.thickness}
-          // roughness={options.roughness}
-          transmission={0}
-          thickness={0}
-          roughness={0}
-          color="white"
-          transparent={true}
-          opacity={1}
-          // // envMap={hdrEquirect}
-          // envMapIntensity={options.envMapIntensity}
-          // clearcoat={options.clearcoat}
-          // clearcoatRoughness={options.clearcoatRoughness}
-          // normalScale={new THREE.Vector2(options.normalScale)}
-          // normalMap={normalMapTexture}
-          // clearcoatNormalMap={normalMapTexture}
-          // clearcoatNormalScale={new THREE.Vector2(options.clearcoatNormalScale)}
-          // transparent
-        />
-      </mesh>
-    </>
-  );
-}
 
 export function TextureScene() {
   // const camera_x = useRef(0);
@@ -239,18 +154,11 @@ export function TextureScene() {
   const ref33 = useRef();
 
   useFrame((state) => {
-    // if (state.clock.elapsedTime % 5 < 1) {
-    // }
-
-    // if (state.clock.elapsedTime > 10 && state.camera.position.x < 100) {
-
-    // }
-
     camera_x = state.camera.position.x;
   });
 
   useEffect(() => {
-    console.log(Date.now() / 1000);
+    // console.log(Date.now() / 1000);
   });
 
   function gaussianRand() {

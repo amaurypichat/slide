@@ -139,7 +139,7 @@ const WaveShaderMaterial = shaderMaterial(
   
   vec4 transitionCarreau(vec2 p,float progress) {
     ivec2 size= ivec2(10, 10);
-float smoothness= 0.5;
+    float smoothness= 0.5;
     float r = rand(floor(vec2(size) * p));
     float m = smoothstep(0.0, -smoothness, r - (progress * (1.0 + smoothness)));
     return mix(getFromColor(p), getToColor(p), m);
@@ -154,8 +154,6 @@ float smoothness= 0.5;
       
       uv.y=vUv.y;
 
-      // uTime=uTime-8.;
-
       Reste=uTime - 10. * floor(uTime/10.);
 
       float dim_image;
@@ -164,8 +162,20 @@ float smoothness= 0.5;
       float dim_image3=960.;
       dim_image1=26.29;
       dim_image2=28.59;
-      dim_image3=28.59;
+      dim_image3=35.18;
       dim_image=(dim_image1 + dim_image2 + dim_image3 );
+
+      float compteurCycle_old;
+      float uTime_old;
+
+      // if ((uTime - 10. * floor(uTime/10.)) < (uTime_old - 10. * floor(uTime_old/10.)){
+       int i_int = int(floor(uTime/10.));
+      // res = i_float2 / 15.0;
+      int compteurCycle2=i_int;
+      // }
+      
+      // ) !=
+      //   Math.floor((state.clock.getElapsedTime() - delta) / 10))
 
       
      // on se cale sur chaque image
@@ -183,6 +193,8 @@ float smoothness= 0.5;
 
       
 
+      
+
 
     if ( Reste > 7. && compteurCycle!=3){
       
@@ -192,9 +204,12 @@ float smoothness= 0.5;
     
       uv = SineWave( uv,A ); 
 
-      if (compteurCycle==1 || compteurCycle==2){
-          //uv.x=uv.x+(Reste - 7. ) *.333/3.;
-          uv.x=uv.x+(Reste - 7. ) *.333/3.;
+      if (compteurCycle==1) {
+          
+          uv.x=uv.x+(Reste - 7. ) * (dim_image1) / (3. * dim_image);
+      }
+      else if(compteurCycle==2){
+        uv.x=uv.x+(Reste - 7. ) * (dim_image2) / (3. * dim_image);
       }
       else{
           uv.x=uv.x -(Reste - 7. ) *.666/3.;
@@ -235,7 +250,6 @@ float smoothness= 0.5;
 
     if (Reste > 7. && compteurCycle==3){
       float progress=uTime - 3. * floor(uTime/3.);
-      // gl_FragColor = transition2(uv,progress / 2.);
 
       vec4 aa=transitionCarreau(uv,progress / 2.);
       if (filigrane){

@@ -30,13 +30,9 @@ import { lerp, damp } from "three/src/math/MathUtils";
 import { Physics } from "@react-three/cannon";
 export default function EnsembleImage({ position, camera_x }) {
   const ref = useRef();
-  const shader2 = useRef();
-  const shader3 = useRef();
-  const shader = useRef();
+
   const mouseTarget = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
-
-  // const CycleModulo = useRef(1);
 
   const compteurCycle = useRef(1);
 
@@ -46,19 +42,13 @@ export default function EnsembleImage({ position, camera_x }) {
 
   const couche3 = useRef();
 
-  const couche1_bis = useRef();
-
-  const couche2_bis = useRef();
-
   const couche3_bis = useRef();
 
   const listeRef = [couche1, couche2, couche3, couche3_bis];
 
   var viewport = useThree((state) => state.viewport);
 
-  const start = useRef(false);
-
-  let delayClock=0
+  const delayClock = useRef(0);
 
   useFrame(({ clock, camera }) => {
     mouseTarget.current.x = -lerp(mouse.current.y, 0, 0.3);
@@ -85,95 +75,41 @@ export default function EnsembleImage({ position, camera_x }) {
       listeRef[i].current.material.resolution =
         window.innerHeight / window.innerWidth;
     }
-
-    // useEffect(()=>{
-      // console.log("EnsembleImage",Date.now() / 1000)
-    // })
   });
 
- 
-
   useFrame((state, delta) => {
-    // couche1.current.material.prout = Math.cos(state.clock.getElapsedTime() / 10);
-
-    
-
-    // state.clock.
-
-    // delayClock+=delta
-
-    // if (!start.current){
-      // state.clock.stop()
-    // }
-
-    // if (state.clock.getElapsedTime()>8 && !start.current ){
-      // console.log("rr",state.clock.getElapsedTime())
-      // state.clock.start()
-      // start.current=true
-      // console.log("rr",delayClock)
-    // }
-
+    delayClock.current += delta;
 
     for (let i = 0; i < listeRef.length; i++) {
-      listeRef[i].current.material.uTime = state.clock.elapsedTime;
+      listeRef[i].current.material.uTime = delayClock.current;
     }
-    // couche1.current.material.uTime = state.clock.getElapsedTime();
-    // couche2.current.material.uTime = state.clock.getElapsedTime();
-    // couche3.current.material.uTime = state.clock.getElapsedTime();
-    // couche3_bis.current.material.uTime = state.clock.getElapsedTime();
-
-    // [couche1, couche2, couche3, couche3_bis].forEach((i) => {
-    //   i.current.material._resolution = [window.innerWidth, window.innerHeight];
-    // });
 
     if (couche2.current.material.compteurCycle == 0) {
       for (let i = 0; i < listeRef.length; i++) {
         listeRef[i].current.material.compteurCycle = compteurCycle.current;
       }
-      // couche1.current.material.compteurCycle = compteurCycle.current;
-      // couche2.current.material.compteurCycle = compteurCycle.current;
-      // couche3.current.material.compteurCycle = compteurCycle.current;
-      // couche3_bis.current.material.compteurCycle = compteurCycle.current;
     }
 
     if (couche2.current.material.compteurCycle == 3) {
       for (let i = 0; i < listeRef.length; i++) {
         listeRef[i].current.material.uAlphaMap = maskDesert;
       }
-      // couche1.current.material.uAlphaMap = maskDesert;
-      // couche2.current.material.uAlphaMap = maskDesert;
-      // couche3.current.material.uAlphaMap = maskDesert;
-      // couche3_bis.current.material.uAlphaMap = maskDesert;
     }
 
-    if (
-      Math.floor(state.clock.elapsedTime / 10) !=
-      Math.floor((state.clock.elapsedTime - delta) / 10)
-    ) {
-      if (compteurCycle.current == 3) {
-        compteurCycle.current = 1;
-      } else {
-        compteurCycle.current += 1;
-      }
+    // if (
+    //   Math.floor(state.clock.getElapsedTime() / 10) !=
+    //   Math.floor((state.clock.getElapsedTime() - delta) / 10)
+    // ) {
+    //   if (compteurCycle.current == 3) {
+    //     compteurCycle.current = 1;
+    //   } else {
+    //     compteurCycle.current += 1;
+    //   }
 
-      for (let i = 0; i < listeRef.length; i++) {
-        listeRef[i].current.material.compteurCycle = compteurCycle.current;
-      }
-
-      // couche1.current.material.compteurCycle = compteurCycle.current;
-      // couche2.current.material.compteurCycle = compteurCycle.current;
-      // couche3.current.material.compteurCycle = compteurCycle.current;
-      // couche3_bis.current.material.compteurCycle = compteurCycle.current;
-    }
-
-    // for (let i = 0; i < listeRef.length; i++) {
-    //   listeRef[i].current.position.z =
-    //   4 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
-
+    //   for (let i = 0; i < listeRef.length; i++) {
+    //     listeRef[i].current.material.compteurCycle = compteurCycle.current;
+    //   }
     // }
-
-    // couche1.current.position.z =
-    //   4 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
 
     couche2.current.position.z =
       8 + 1 * Math.sin((2 * Math.PI * state.clock.getElapsedTime()) / 10);
@@ -194,11 +130,8 @@ export default function EnsembleImage({ position, camera_x }) {
     );
   });
 
-  const image = useLoader(THREE.TextureLoader, "/slide/image3.png");
+  const image = useLoader(THREE.TextureLoader, "/slide/image2.png");
   image.colorSpace = THREE.SRGBColorSpace;
-
-  // const image2 = useLoader(THREE.TextureLoader, "/slide/mushrooms.jpg");
-  // image2.colorSpace = THREE.SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
@@ -222,12 +155,6 @@ export default function EnsembleImage({ position, camera_x }) {
 
   const image1 = useLoader(THREE.TextureLoader, "/slide/nature_morte.jpg");
   mask.colorSpace = THREE.SRGBColorSpace;
-
-  // const image3 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
-  // mask.colorSpace = THREE.SRGBColorSpace;
-
-  // const transition_shape = useLoader(THREE.TextureLoader, "/slide/spiral.png");
-  // mask.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <group position={position} ref={ref}>
@@ -256,23 +183,6 @@ export default function EnsembleImage({ position, camera_x }) {
         />
       </mesh>
 
-      {/* <mesh ref={couche1_bis} position={[0, 0, 4.1]}>
-          <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-          <waveShaderMaterial
-            // ref={shader2}
-            uAlphaMap={image}
-            map={image}
-            map2={maskDesert}
-            uTexture={image}
-            fond={true}
-            toneMapped={false}
-            camera_x={camera_x}
-            compteurCycle={compteurCycle.current}
-            color="black"
-            filigrane={true}
-          />
-        </mesh> */}
-
       <mesh ref={couche2} position={[0, 0, 8]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
@@ -295,23 +205,6 @@ export default function EnsembleImage({ position, camera_x }) {
         />
       </mesh>
 
-      {/* <mesh ref={couche2_bis} position={[0, 0, 8.1]}>
-          <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
-          <waveShaderMaterial
-            // ref={shader2}
-            uAlphaMap={image}
-            map={image}
-            map2={maskDesert}
-            uTexture={image}
-            fond={false}
-            toneMapped={false}
-            camera_x={camera_x}
-            compteurCycle={compteurCycle.current}
-            color="black"
-            filigrane={true}
-          />
-        </mesh> */}
-
       <mesh ref={couche3} position={[0, 0, 12]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
@@ -322,7 +215,6 @@ export default function EnsembleImage({ position, camera_x }) {
           uTexture={image}
           transparent
           fond={false}
-          // lights="true"
           toneMapped={false}
           camera_x={camera_x}
           compteurCycle={compteurCycle.current}
@@ -338,14 +230,12 @@ export default function EnsembleImage({ position, camera_x }) {
       <mesh ref={couche3_bis} position={[0, 0, 12.1]}>
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
-          // ref={shader}
           uAlphaMap={image}
           map={map}
           map2={image2}
           uTexture={image}
           transparent
           fond={false}
-          // lights="true"
           toneMapped={false}
           camera_x={camera_x}
           compteurCycle={compteurCycle.current}
@@ -363,21 +253,23 @@ export default function EnsembleImage({ position, camera_x }) {
 
 function Ttext() {
   const y = useRef(0);
-  const refOldScreenHeight = useRef(0);
+  const delayClock = useRef(0);
   const reftext = useRef();
   const compteurCycle = useRef(1);
   let mouseTarget = useRef({ y: 0 });
 
-  useFrame((state,delta) => {
+  useFrame((state, delta) => {
     reftext.current.position.y = lerp(
       reftext.current.position.y,
       mouseTarget.current.y,
       0.3
     );
 
+    delayClock.current += delta;
+
     if (
-      Math.floor(state.clock.elapsedTime / 10) !=
-      Math.floor((state.clock.elapsedTime - delta) / 10)
+      Math.floor(delayClock.current / 10) !=
+      Math.floor((delayClock.current - delta) / 10)
     ) {
       if (compteurCycle.current == 3) {
         compteurCycle.current = 1;
@@ -385,28 +277,21 @@ function Ttext() {
         compteurCycle.current += 1;
       }
     }
-    
+
     if (compteurCycle.current == 3) {
       reftext.current.outlineColor = "black";
     } else {
       reftext.current.outlineColor = "green";
     }
-
-
-    
   });
 
   useEffect(() => {
-    //max pos du texte => 40
-    // moitié ecran défilement site web standard = 30
-
     const setTargetMouse = (event) => {
       mouseTarget.current.y += event.deltaY / 100;
     };
 
     window.addEventListener("wheel", setTargetMouse);
   });
-  //text position was originaly 5
   return (
     <>
       <Text
@@ -419,9 +304,8 @@ function Ttext() {
         position={[0, 15, 13.2]}
         font={"/slide/Roboto-Regular.ttf"}
         outlineWidth="1%"
-        // outlineColor="green"
       >
-        Hello
+        Site réalisé avec Three.js et OpenGL
       </Text>
     </>
   );
