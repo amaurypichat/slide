@@ -18,14 +18,10 @@ import WaveShaderMaterial from "../component/shader";
 extend({ WaveShaderMaterial });
 import {
   Text,
-  Text3D,
-  shaderMaterial,
-  PerspectiveCamera,
-  AdaptiveDpr,
-  PerformanceMonitor,
-  FontData,
 } from "@react-three/drei";
-import * as THREE from "three";
+
+import Ttext from "./Ttext"
+import {TextureLoader,SRGBColorSpace} from "three";
 import { lerp, damp } from "three/src/math/MathUtils";
 import { Physics } from "@react-three/cannon";
 export default function EnsembleImage({ position, camera_x }) {
@@ -81,7 +77,7 @@ export default function EnsembleImage({ position, camera_x }) {
     delayClock.current += delta;
 
     for (let i = 0; i < listeRef.length; i++) {
-      listeRef[i].current.material.uTime = delayClock.current;
+      listeRef[i].current.material.uTime = state.clock.getElapsedTime();
     }
 
     if (couche2.current.material.compteurCycle == 0) {
@@ -90,11 +86,11 @@ export default function EnsembleImage({ position, camera_x }) {
       }
     }
 
-    if (couche2.current.material.compteurCycle == 3) {
-      for (let i = 0; i < listeRef.length; i++) {
-        listeRef[i].current.material.uAlphaMap = maskDesert;
-      }
-    }
+    // if (couche2.current.material.compteurCycle == 3) {
+    //   for (let i = 0; i < listeRef.length; i++) {
+    //     // listeRef[i].current.material.uAlphaMap = maskDesert;
+    //   }
+    // }
 
     // if (
     //   Math.floor(state.clock.getElapsedTime() / 10) !=
@@ -130,31 +126,31 @@ export default function EnsembleImage({ position, camera_x }) {
     );
   });
 
-  const image = useLoader(THREE.TextureLoader, "/slide/image2.png");
-  image.colorSpace = THREE.SRGBColorSpace;
+  const image = useLoader(TextureLoader, "/slide/concat9.avif");
+  image.colorSpace = SRGBColorSpace;
 
   const image_size = [1024 / 10, 742 / 10];
 
-  const mask = useLoader(THREE.TextureLoader, "/slide/mask5.jpg");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  const mask = useLoader(TextureLoader, "/slide/mask5.avif");
+  mask.colorSpace = SRGBColorSpace;
 
-  const maskDesert = useLoader(THREE.TextureLoader, "/slide/maskDesert.png");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const maskDesert = useLoader(THREE.TextureLoader, "/slide/maskDesert.png");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
-  const transition_shape = useLoader(THREE.TextureLoader, "/slide/spiral.png");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const transition_shape = useLoader(THREE.TextureLoader, "/slide/spiral.png");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image2 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const image2 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
-  const map = useLoader(THREE.TextureLoader, "/slide/terrasse.jpg");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const map = useLoader(THREE.TextureLoader, "/slide/terrasse.jpg");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image3 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const image3 = useLoader(THREE.TextureLoader, "/slide/ds.jpg");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
-  const image1 = useLoader(THREE.TextureLoader, "/slide/nature_morte.jpg");
-  mask.colorSpace = THREE.SRGBColorSpace;
+  // const image1 = useLoader(THREE.TextureLoader, "/slide/nature_morte.jpg");
+  // mask.colorSpace = THREE.SRGBColorSpace;
 
   return (
     <group position={position} ref={ref}>
@@ -167,10 +163,10 @@ export default function EnsembleImage({ position, camera_x }) {
         <waveShaderMaterial
           // ref={shader2}
           uAlphaMap={image}
-          map={image}
-          map2={image2}
-          image3={image3}
-          image1={image1}
+          // map={image}
+          // map2={image2}
+          // image3={image3}
+          // image1={image1}
           uTexture={image}
           fond={true}
           toneMapped={false}
@@ -179,7 +175,7 @@ export default function EnsembleImage({ position, camera_x }) {
           color="black"
           filigrane={false}
           _resolution={0.0}
-          transition_shape={transition_shape}
+          // transition_shape={transition_shape}
         />
       </mesh>
 
@@ -188,8 +184,8 @@ export default function EnsembleImage({ position, camera_x }) {
         <waveShaderMaterial
           // ref={shader3}
           uAlphaMap={image}
-          map={map}
-          map2={image2}
+          // map={map}
+          // map2={image2}
           uTexture={image}
           transparent
           fond={false}
@@ -199,9 +195,9 @@ export default function EnsembleImage({ position, camera_x }) {
           filigrane={false}
           color="black"
           _resolution={0.0}
-          transition_shape={transition_shape}
-          image3={image3}
-          image1={image1}
+          // transition_shape={transition_shape}
+          // image3={image3}
+          // image1={image1}
         />
       </mesh>
 
@@ -210,8 +206,8 @@ export default function EnsembleImage({ position, camera_x }) {
         <waveShaderMaterial
           // ref={shader}
           uAlphaMap={image}
-          map={map}
-          map2={image2}
+          // map={map}
+          // map2={image2}
           uTexture={image}
           transparent
           fond={false}
@@ -221,9 +217,9 @@ export default function EnsembleImage({ position, camera_x }) {
           filigrane={false}
           color="black"
           _resolution={0.0}
-          transition_shape={transition_shape}
-          image3={image3}
-          image1={image1}
+          // transition_shape={transition_shape}
+          // image3={image3}
+          // image1={image1}
         />
       </mesh>
 
@@ -231,8 +227,8 @@ export default function EnsembleImage({ position, camera_x }) {
         <planeGeometry args={[image_size[0], image_size[1], 1, 1]} />
         <waveShaderMaterial
           uAlphaMap={image}
-          map={map}
-          map2={image2}
+          // map={map}
+          // map2={image2}
           uTexture={image}
           transparent
           fond={false}
@@ -242,71 +238,13 @@ export default function EnsembleImage({ position, camera_x }) {
           filigrane={true}
           color="black"
           _resolution={0.0}
-          transition_shape={transition_shape}
-          image3={image3}
-          image1={image1}
+          // transition_shape={transition_shape}
+          // image3={image3}
+          // image1={image1}
         />
       </mesh>
     </group>
   );
 }
 
-function Ttext() {
-  const y = useRef(0);
-  const delayClock = useRef(0);
-  const reftext = useRef();
-  const compteurCycle = useRef(1);
-  let mouseTarget = useRef({ y: 0 });
 
-  useFrame((state, delta) => {
-    reftext.current.position.y = lerp(
-      reftext.current.position.y,
-      mouseTarget.current.y,
-      0.3
-    );
-
-    delayClock.current += delta;
-
-    if (
-      Math.floor(delayClock.current / 10) !=
-      Math.floor((delayClock.current - delta) / 10)
-    ) {
-      if (compteurCycle.current == 3) {
-        compteurCycle.current = 1;
-      } else {
-        compteurCycle.current += 1;
-      }
-    }
-
-    if (compteurCycle.current == 3) {
-      reftext.current.outlineColor = "black";
-    } else {
-      reftext.current.outlineColor = "green";
-    }
-  });
-
-  useEffect(() => {
-    const setTargetMouse = (event) => {
-      mouseTarget.current.y += event.deltaY / 100;
-    };
-
-    window.addEventListener("wheel", setTargetMouse);
-  });
-  return (
-    <>
-      <Text
-        ref={reftext}
-        scale={[3, 3, 3]}
-        anchorX="center" // default
-        anchorY="middle" // default
-        color="white"
-        toneMapped={false}
-        position={[0, 15, 13.2]}
-        font={"/slide/Roboto-Regular.ttf"}
-        outlineWidth="1%"
-      >
-        Site réalisé avec Three.js et OpenGL
-      </Text>
-    </>
-  );
-}

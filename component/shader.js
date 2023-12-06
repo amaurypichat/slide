@@ -15,10 +15,10 @@ const WaveShaderMaterial = shaderMaterial(
     uTime: 0,
     uTexture: new THREE.Texture(),
     uAlphaMap: new THREE.Texture(),
-    map2: new THREE.Texture(),
-    map: new THREE.Texture(),
-    image3: new THREE.Texture(),
-    image1: new THREE.Texture(),
+    // map2: new THREE.Texture(),
+    // map: new THREE.Texture(),
+    // image3: new THREE.Texture(),
+    // image1: new THREE.Texture(),
     fond: false,
     camera_x: 0,
     compteurCycle: 1,
@@ -36,12 +36,12 @@ const WaveShaderMaterial = shaderMaterial(
     precision mediump float;
     uniform float uTime;
     uniform sampler2D uTexture;
-    uniform sampler2D map2;
+    // uniform sampler2D map2;
     uniform sampler2D uAlphaMap;
     uniform sampler2D map;
 
-    uniform sampler2D image3;
-    uniform sampler2D image1;
+    // uniform sampler2D image3;
+    // uniform sampler2D image1;
 
     uniform vec3 uColor;
     uniform bool fond;
@@ -83,55 +83,55 @@ const WaveShaderMaterial = shaderMaterial(
       return ttt;
   }
 
-  vec4 getFromColor2(vec2 uvloc){
+  // vec4 getFromColor2(vec2 uvloc){
     
-    vec4 ttt = texture2D(image3, uvloc);
-    return ttt;
-  }
+  //   vec4 ttt = texture2D(image3, uvloc);
+  //   return ttt;
+  // }
 
-  vec4 getToColor2(vec2 uvloc){
-      vec2 uvloc2=vUv;
-      // uvloc2.x=vUv.x* 0.3;
-      vec4 ttt = texture2D(image1, uvloc2);
-      return ttt;
-  }
+  // vec4 getToColor2(vec2 uvloc){
+  //     vec2 uvloc2=vUv;
+  //     // uvloc2.x=vUv.x* 0.3;
+  //     vec4 ttt = texture2D(image1, uvloc2);
+  //     return ttt;
+  // }
 
-  vec4 transition2(vec2 uv,float progress) {
-    vec2 center = vec2(0, 0);
-    float dots = 20.0;
-    vec2 uvbis=uv;
-    bool nextImage = distance(fract(uv * dots), vec2(0.5, 0.5)) < ( progress / distance(uv, center));
-    return nextImage ? getToColor(uvbis) : getFromColor(uv);
-  }
+  // vec4 transition2(vec2 uv,float progress) {
+  //   vec2 center = vec2(0, 0);
+  //   float dots = 20.0;
+  //   vec2 uvbis=uv;
+  //   bool nextImage = distance(fract(uv * dots), vec2(0.5, 0.5)) < ( progress / distance(uv, center));
+  //   return nextImage ? getToColor(uvbis) : getFromColor(uv);
+  // }
 
-  vec4 transition3(vec2 p,float progress) {
-    float strength=0.5;
-    vec4 ca = getFromColor(p);
-    vec4 cb = getToColor(p);
+  // vec4 transition3(vec2 p,float progress) {
+  //   float strength=0.5;
+  //   vec4 ca = getFromColor(p);
+  //   vec4 cb = getToColor(p);
     
-    vec2 oa = (((ca.rg+ca.b)*0.5)*2.0-1.0);
-    vec2 ob = (((cb.rg+cb.b)*0.5)*2.0-1.0);
-    vec2 oc = mix(oa,ob,0.5)*strength;
+  //   vec2 oa = (((ca.rg+ca.b)*0.5)*2.0-1.0);
+  //   vec2 ob = (((cb.rg+cb.b)*0.5)*2.0-1.0);
+  //   vec2 oc = mix(oa,ob,0.5)*strength;
     
-    float w0 = progress;
-    float w1 = 1.0-w0;
-    return mix(getFromColor2(p+oc*w0), getToColor2(p-oc*w1), progress);
-  }
+  //   float w0 = progress;
+  //   float w1 = 1.0-w0;
+  //   return mix(getFromColor2(p+oc*w0), getToColor2(p-oc*w1), progress);
+  // }
 
-  vec4 transition4(vec2 p,float progress) {
-    float size= 0.04;
-    float zoom= 50.0;
-    float colorSeparation= 0.3;
-    float inv = 1. - progress;
-    vec2 disp = size*vec2(cos(zoom*p.x), sin(zoom*p.y));
-    vec4 texTo = getToColor(p + inv*disp);
-    vec4 texFrom = vec4(
-      getFromColor(p + progress*disp*(1.0 - colorSeparation)).r,
-      getFromColor(p + progress*disp).g,
-      getFromColor(p + progress*disp*(1.0 + colorSeparation)).b,
-      1.0);
-    return texTo*progress + texFrom*inv;
-  }
+  // vec4 transition4(vec2 p,float progress) {
+  //   float size= 0.04;
+  //   float zoom= 50.0;
+  //   float colorSeparation= 0.3;
+  //   float inv = 1. - progress;
+  //   vec2 disp = size*vec2(cos(zoom*p.x), sin(zoom*p.y));
+  //   vec4 texTo = getToColor(p + inv*disp);
+  //   vec4 texFrom = vec4(
+  //     getFromColor(p + progress*disp*(1.0 - colorSeparation)).r,
+  //     getFromColor(p + progress*disp).g,
+  //     getFromColor(p + progress*disp*(1.0 + colorSeparation)).b,
+  //     1.0);
+  //   return texTo*progress + texFrom*inv;
+  // }
 
   float rand (vec2 co) {
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -165,13 +165,34 @@ const WaveShaderMaterial = shaderMaterial(
       dim_image3=35.18;
       dim_image=(dim_image1 + dim_image2 + dim_image3 );
 
-      float compteurCycle_old;
-      float uTime_old;
+      // float compteurCycle_old;
+      // float uTime_old;
+      float compteurCycle2=1.;
 
       // if ((uTime - 10. * floor(uTime/10.)) < (uTime_old - 10. * floor(uTime_old/10.)){
-       int i_int = int(floor(uTime/10.));
+      //  int i_int = int(floor(uTime/10.));
       // res = i_float2 / 15.0;
-      int compteurCycle2=i_int;
+      // compteurCycle2=i_int + 1;
+
+      compteurCycle2=floor((uTime)/10.)+1.;
+
+      while (compteurCycle2-3.>0.){
+        compteurCycle2=compteurCycle2-3.;
+      }
+      
+      // if (compteurCycle2 - 3. * floor(compteurCycle2/3.)  ==0.){
+      //   compteurCycle2=3.;
+      // }
+      // else if (compteurCycle2 - 2. * floor(compteurCycle2/2.)  ==0.){
+      //   compteurCycle2=2.;
+      // }
+      // else{
+      //   compteurCycle2=1.;
+      // }
+
+      // if (compteuCycle2 > 3){
+        // compteuCycle2=1;
+      // }
       // }
       
       // ) !=
@@ -179,15 +200,13 @@ const WaveShaderMaterial = shaderMaterial(
 
       
      // on se cale sur chaque image
-      if (compteurCycle==1 ){
+      if (compteurCycle2==1. ){
         uv.x=vUv.x * 0.3  ;
       }
-      
-      else if (compteurCycle==2){
+      else if (compteurCycle2==2.){
         uv.x=vUv.x * 0.3 + (dim_image1) / dim_image;
       }
-      
-      else if (compteurCycle==3){
+      else if (compteurCycle2==3.){
         uv.x=vUv.x * 0.3 + (dim_image1 + dim_image2) / dim_image;
       }
 
@@ -196,7 +215,7 @@ const WaveShaderMaterial = shaderMaterial(
       
 
 
-    if ( Reste > 7. && compteurCycle!=3){
+    if ( Reste > 7. && compteurCycle2!=3.){
       
       A=0.;
       
@@ -204,17 +223,17 @@ const WaveShaderMaterial = shaderMaterial(
     
       uv = SineWave( uv,A ); 
 
-      if (compteurCycle==1) {
+      if (compteurCycle2==1.) {
           
           uv.x=uv.x+(Reste - 7. ) * (dim_image1) / (3. * dim_image);
       }
-      else if(compteurCycle==2){
+      else if(compteurCycle2==2.){
         uv.x=uv.x+(Reste - 7. ) * (dim_image2) / (3. * dim_image);
       }
-      else{
-          uv.x=uv.x -(Reste - 7. ) *.666/3.;
+      // else{
+          // uv.x=uv.x -(Reste - 7. ) *.666/3.;
         
-      }
+      // }
      
     }
 
@@ -227,7 +246,7 @@ const WaveShaderMaterial = shaderMaterial(
 
     t2=0.;
 
-    if (compteurCycle!=4){
+    // if (compteurCycle2!=4.){
       float alpha=1.;
       if (((vUv.x - .5) * (vUv.x - .5) + (vUv.y - .5)*(vUv.y - .5)) <.2){
         alpha=0.;
@@ -239,16 +258,16 @@ const WaveShaderMaterial = shaderMaterial(
         t2=0.;
       }
       alpha=smoothstep(0.,1.,(vUv.x - .5) * (vUv.x - .5) + (vUv.y - .5)*(vUv.y - .5));
-    }else{
-      vec3 aa = texture2D(uAlphaMap, uv).rgb;
-      t2=(aa.r +  aa.g + aa.b ) /3.;
-    }
+    // }else{
+      // vec3 aa = texture2D(uAlphaMap, uv).rgb;
+      // t2=(aa.r +  aa.g + aa.b ) /3.;
+    // }
 
     
     
     // vec2 p = gl_FragCoord.xy / _resolution.xy ;
 
-    if (Reste > 7. && compteurCycle==3){
+    if (Reste > 7. && compteurCycle2==3.){
       float progress=uTime - 3. * floor(uTime/3.);
 
       vec4 aa=transitionCarreau(uv,progress / 2.);
