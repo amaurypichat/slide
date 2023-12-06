@@ -2,12 +2,14 @@ import {
   useEffect,
   useRef,
 } from "react";
-
+import { lerp, damp } from "three/src/math/MathUtils";
 import {
-
+  
   useFrame
 
 } from "@react-three/fiber";
+
+import {Text} from "@react-three/drei";
 
 export default function Ttext() {
     const y = useRef(0);
