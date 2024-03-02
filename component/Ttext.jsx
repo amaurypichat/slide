@@ -65,7 +65,7 @@ export default function Ttext() {
           font={"/slide/Roboto-Regular.ttf"}
           outlineWidth="1%"
         >
-          Site réalisé avec Three.js et WebGLLLL
+          Site réalisé avec Three.js et WebGL
         </Text>
       </>
     );
