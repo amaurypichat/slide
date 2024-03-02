@@ -20,19 +20,9 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-// import {
-//   postprocessing,
-//   EffectComposer,
-//   Bloom,
-// } from "@react-three/postprocessing";
-// import { GLSL } from "gl-react";
-// import { lerp, damp } from "three/src/math/MathUtils";
-// import { useControls } from "leva";
-// import WaveShaderMaterial from "../component/shader2";
-import RoundedBoxGeometry from "./../boxgeo.js";
-// import CookieConsent from "../component/CookieConsent";
 
-// import { OrbitControls } from "@react-three/drei";
+import RoundedBoxGeometry from "./../boxgeo.js";
+
 import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
 
@@ -64,25 +54,11 @@ function Home() {
 
   useEffect(() => {
     var first = true;
-    // if (first) {
-    //   for (let pas = 0; pas < 110; pas = pas + 1) {
-    //     setTimeout(() => {
-    //       document.querySelector(".greybar").style.width = pas + "vw";
-    //     }, 80 * pas);
-    //   }
 
-    //   setTimeout(() => {
-    //     document.querySelector(".wrapGreybar").style.display = "none";
-    //     document.querySelector("#div_canvas").style.visibility = "visible";
-    //     document.querySelector("#menu").style.visibility = "visible";
-    //     // document.querySelector("#div_canvas").style.display = "block";
-    //   }, 8000);
-    // }
   });
 
   return (
     <>
-      {/* <CookieConsent /> */}
       <Head>
         <title>Book A.PICHAT</title>
         <link rel="shortcut icon" href="/slide/favicon.ico" />
