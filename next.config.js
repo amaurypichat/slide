@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@react-three/drei"],
   basePath:"/slide",
+  output:"../../prod/slide",
   eslint: {
     ignoreDuringBuilds: true,
   },
