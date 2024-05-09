@@ -22,6 +22,6 @@ jobs:
           script: |
             cd /var/www/html/dev/slide # Specify the path to your app directory on the server
             git remote add origin2 https://github.com/amaurypichat/slide.git
-            git pull origin2 master
+            git pull origin master
             npm install --legacy-peer-deps
             npm run build
