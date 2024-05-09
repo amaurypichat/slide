@@ -5,6 +5,7 @@ const config = {
         "\\.(css|jpg|png)$": "identity-obj-proxy"
       },
       "testEnvironment": "jsdom",
+	  extensionsToTreatAsEsm: ['.jsx'],
       transform: {
         '\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.testing.js' }]
       },
