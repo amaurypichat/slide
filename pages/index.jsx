@@ -18,7 +18,7 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import RoundedBoxGeometry from "./../component/Boxgeo.js";
+import RoundedBoxGeometry from "@/component/Boxgeo";
 import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
 extend({ RoundedBoxGeometry });
@@ -125,7 +125,7 @@ function Home() {
               lineHeight: "normal",
             }}
           >
-            Site non optimisé pour Smartphone. Merci de revenir consulter cette
+            Site non optimisé pour Smartphoneee. Merci de revenir consulter cette
             page sur PC !
           </span>
         </div>
