@@ -18,10 +18,10 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import RoundedBoxGeometry from "@/component/Boxgeo";
+// import RoundedBoxGeometry from "./../component/Boxgeo.jsx";
 import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
-extend({ RoundedBoxGeometry });
+// extend({ RoundedBoxGeometry });
 const Cyl = forwardRef(({ rotation, length, position }, ref) => (
   <mesh ref={ref} rotation={rotation} position={position}>
     <cylinderGeometry args={[0.03, 0.03, length, 16]} />
