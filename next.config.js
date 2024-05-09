@@ -4,8 +4,9 @@ const nextConfig = {
   transpilePackages: ["@react-three/drei"],
   basePath:"/slide",
   // output:"../../prod/slide",
-  	  distDir:"/slide",
+  	  // distDir:"/slide",
 	  output:"export",
+	  distDir:"../../prod/slide",
   eslint: {
     ignoreDuringBuilds: true,
   },

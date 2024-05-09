@@ -44,16 +44,5 @@
     "next-offline": "^5.0.5",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
-  },
-  "next-unused": {
-    "include": [
-      "component",
-      "public",
-      "./../../"
-    ],
-    "fileExtensions": [
-      "png",
-      "gif"
-    ]
   }
 }
