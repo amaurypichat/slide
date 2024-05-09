@@ -6,7 +6,10 @@ export default function Document() {
     <>
     <Cookie />
     <Html lang="en">
-      <Head />
+      <Head >
+	  <link rel="icon" href="/favigcon.ico?v=4" sizes="any" />
+      <meta name="description" content="Amaury PICHAT Développeur Web"></meta>
+	  </Head>
       <body>
         <Main />
         <NextScript />

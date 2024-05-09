@@ -18,7 +18,7 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import RoundedBoxGeometry from "./../boxgeo.js";
+import RoundedBoxGeometry from "@/component/BoxGeo";
 import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
 extend({ RoundedBoxGeometry });
@@ -48,10 +48,7 @@ function Home() {
   });
   return (
     <>
-      <Head>
-        <title>Book A.PICHAT</title>
-        <link rel="shortcut icon" href="/slide/favicon.ico" />
-      </Head>
+    
       {!isTabletOrMobile && (
         <>
           <div
@@ -152,7 +149,7 @@ export function TextureScene({ start }) {
   });
   useEffect(() => {
     const millis = Date.now() - start;
-    console.log(`seconds elapsed = ${millis / 1000}`);
+    // console.log(`seconds elapsed = ${millis / 1000}`);
   }, []);
   function gaussianRand() {
     var rand = 0;
