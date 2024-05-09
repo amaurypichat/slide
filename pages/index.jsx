@@ -18,7 +18,7 @@ import {
   extend,
   useThree,
 } from "@react-three/fiber";
-import RoundedBoxGeometry from "/../component/BoxGeo.js";
+import RoundedBoxGeometry from "./../component/BoxGeo.js";
 import { useMediaQuery } from "react-responsive";
 import EnsembleImage from "@/component/EnsembleImage";
 extend({ RoundedBoxGeometry });
